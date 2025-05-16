@@ -1,5 +1,6 @@
 using Deploy.Application;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
@@ -13,6 +14,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DeployContext>();
+    db.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
