@@ -1,0 +1,33 @@
+﻿services:
+  deploy.api:
+    image: deploy.api
+    build:
+      context: .
+      dockerfile: Deploy.API/Dockerfile
+    env_file:
+      - .env
+    networks:
+      - deploy-network
+      
+  db:
+    image: postgres:latest
+    container_name: db-deploy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-deploy-volume:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - deploy-network
+
+volumes:
+  db-deploy-volume:
+
+networks:
+  deploy-network:
+    driver: bridge
